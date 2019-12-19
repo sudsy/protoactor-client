@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Proto.Actor" Version="0.2.134-cluster-experiments" />
+    <PackageReference Include="Proto.Remote" Version="0.2.134-cluster-experiments" />
+    <PackageReference Include="Grpc" Version="2.26.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.26.0" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Protobuf Include="Protos.proto" GrpcServices="Client" AdditionalImportDirs="$(NugetPackageRoot)proto.actor/0.2.134-cluster-experiments/protos;$(NugetPackageRoot)proto.remote/0.2.134-cluster-experiments/protos" />
+  </ItemGroup>
+</Project>
