@@ -25,7 +25,7 @@ message ClientHostPIDResponse {
 
 message ClientMessageBatch {
     string address = 1;
-    // remote.MessageBatch batch = 2;
+    remote.MessageBatch batch = 2;
 }
 
 

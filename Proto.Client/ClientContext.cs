@@ -6,7 +6,7 @@ namespace Proto.Client
     {
         private Action onDisposedAction;
 
-        public ClientContext(ClientChannel clientChannel, Action onDisposed)
+        public ClientContext(PID channelManager, Action onDisposed)
         {
             this.onDisposedAction = onDisposed;
         }

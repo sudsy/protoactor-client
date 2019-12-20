@@ -10,6 +10,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Protobuf Include="Protos.proto" GrpcServices="Client" AdditionalImportDirs="$(NugetPackageRoot)proto.actor/0.2.134-cluster-experiments/protos;$(NugetPackageRoot)proto.remote/0.2.134-cluster-experiments/protos" />
+    <Protobuf Include="Protos.proto" GrpcServices="Both" AdditionalImportDirs="$(NugetPackageRoot)proto.actor/0.2.134-cluster-experiments/protos;$(NugetPackageRoot)proto.remote/0.2.134-cluster-experiments/protos" />
   </ItemGroup>
-</Project>
+</Project> 

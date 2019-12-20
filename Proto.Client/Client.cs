@@ -32,8 +32,8 @@ namespace Proto.Client
             {
                 _channelmanager = RootContext.Empty.SpawnNamed(Props.FromProducer(() => new ClientChannelManager(_config, _connectionTimeout)), "client_channel_manager");
             }
-            var clientChannel = await RootContext.Empty.RequestAsync<ClientChannel>(_channelmanager, $"{_hostname}:{_port}");
-            var clientContext = new ClientContext(clientChannel, OnContextDispose);
+            await RootContext.Empty.RequestAsync<EndpointConnectedEvent>(_channelmanager, $"{_hostname}:{_port}");
+            var clientContext = new ClientContext(_channelmanager, OnContextDispose);
 
             _clientContext = clientContext;
 
