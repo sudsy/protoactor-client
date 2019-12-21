@@ -27,9 +27,9 @@ namespace Proto.Client
             
             
 
-            var addr = $"{config.AdvertisedHostname}:{config.AdvertisedPort}";
+            
 
-            var clientEndpointManager = new ClientHostEndpointManager(addr);
+            var clientEndpointManager = new ClientHostEndpointManager();
             
 
             _server = new Server(config.ChannelOptions)
@@ -38,6 +38,8 @@ namespace Proto.Client
                 Ports = { new ServerPort(hostname, port, config.ServerCredentials) }
                
             };
+
+            _server.Start();
 
             
         }

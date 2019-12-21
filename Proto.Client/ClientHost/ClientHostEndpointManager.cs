@@ -12,11 +12,11 @@ namespace Proto.Client
     public class ClientHostEndpointManager: ClientRemoting.ClientRemotingBase
     {
         
-        private static readonly ILogger Logger = Log.CreateLogger<ClientHostEndpointManager>();
+        private static readonly ILogger _logger = Log.CreateLogger<ClientHostEndpointManager>();
         
-        public ClientHostEndpointManager(string clientHostAddress)
+        public ClientHostEndpointManager()
         {
-            _clientHostAddress = clientHostAddress;
+            
           
             
         }
@@ -28,15 +28,15 @@ namespace Proto.Client
             IServerStreamWriter<MessageBatch> responseStream, ServerCallContext context)
         {
             
-            Logger.LogDebug($"Spawning Client EndpointWriter");
+            _logger.LogDebug($"Spawning Client EndpointWriter");
 
-            Logger.LogDebug($"Request headers count is {context.RequestHeaders.Count} - {context.RequestHeaders.Select(entry => entry.Key + ":" + entry.Value).Aggregate((acc, value) => acc + "," + value)}");
+            _logger.LogDebug($"Request headers count is {context.RequestHeaders.Count} - {context.RequestHeaders.Select(entry => entry.Key + ":" + entry.Value).Aggregate((acc, value) => acc + "," + value)}");
             var clientIdHeader = context.RequestHeaders.FirstOrDefault(entry => entry.Key == "clientid");
             var clientId = clientIdHeader?.Value;
             if (clientId == null)
             {
                 clientId = Guid.NewGuid().ToString();
-                Logger.LogWarning($"clientId header is not set - generating random client id {clientId}");
+                _logger.LogWarning($"clientId header is not set - generating random client id {clientId}");
                 
             }
 
@@ -52,7 +52,7 @@ namespace Proto.Client
 
                     var targetAddress = clientMessageBatch.Address;
 
-                    Logger.LogDebug($"Received Batch for {targetAddress}");
+                    _logger.LogDebug($"Received Batch for {targetAddress}");
 
                     foreach (var envelope in clientMessageBatch.Batch.Envelopes)
                     {
@@ -60,12 +60,12 @@ namespace Proto.Client
                         var message = Serialization.Deserialize(clientMessageBatch.Batch.TypeNames[envelope.TypeId],
                             envelope.MessageData, envelope.SerializerId);
 
-                        Logger.LogDebug($"Batch Message {message.GetType()}");
+                        _logger.LogDebug($"Batch Message {message.GetType()}");
 
                         var target = new PID(targetAddress, clientMessageBatch.Batch.TargetNames[envelope.Target]);
 
                       
-                        Logger.LogDebug($"Target is {target}");
+                        _logger.LogDebug($"Target is {target}");
 
                        
 
@@ -78,7 +78,7 @@ namespace Proto.Client
 
                         var forwardingEnvelope = new Proto.MessageEnvelope(message, envelope.Sender, header);
 
-                        Logger.LogDebug($"Sending message {message.GetType()} to target {target} from {envelope.Sender}");
+                        _logger.LogDebug($"Sending message {message.GetType()} to target {target} from {envelope.Sender}");
                         
                         RootContext.Empty.Send(target, forwardingEnvelope);
 
@@ -87,15 +87,15 @@ namespace Proto.Client
                     }
                 }
 
-                Logger.LogDebug("Finished Request Stream - stopping connection manager");
+                _logger.LogDebug("Finished Request Stream - stopping connection manager");
                 
                 await clientHostEndpointWriter.PoisonAsync();
-                Logger.LogDebug("Client Endpoint manager shut down");
+                _logger.LogDebug("Client Endpoint manager shut down");
                 
             }   
             catch (Exception ex)
             {
-                Logger.LogCritical(ex, "Exception on Client Host");
+                _logger.LogCritical(ex, "Exception on Client Host");
                 throw ex;
             }
 
@@ -133,17 +133,17 @@ namespace Proto.Client
             }
             catch (ProcessNameExistException)
             {
-                Logger.LogDebug("Existing endpointwriter found - waiting for shutdown");
+                _logger.LogDebug("Existing endpointwriter found - waiting for shutdown");
                 //Still hanging around from last connection
                 var endpointWriterPID = new PID {Address = ProcessRegistry.Instance.Address, Id = clientId};
                 endpointWriterPID.Stop();
                 await Task.Delay(TimeSpan.FromMilliseconds(100));
-                Logger.LogDebug("Paused for 100 msec to allow shutdown");
+                _logger.LogDebug("Paused for 100 msec to allow shutdown");
                 return await SpawnClientHostEndpointWriter(responseStream, clientId);
             }
             catch(Exception ex)
             {
-                Logger.LogCritical(ex, "Exception while spawning endpoint writer");
+                _logger.LogCritical(ex, "Exception while spawning endpoint writer");
                 throw ex;
             }
             

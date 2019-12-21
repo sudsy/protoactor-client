@@ -29,7 +29,10 @@ namespace Proto.Client
 
             switch (context.Message)
             {
-                
+                case Started _:
+                    context.Send(context.Self, "listen");
+                    break;
+
                 // case ClientHostPIDRequest _:
                 //     _logger.LogDebug("Received PID Request");
                 //     if (_clientHostPIDResponse != null)
@@ -58,6 +61,8 @@ namespace Proto.Client
                     if (!await _responseStream.MoveNext(new CancellationToken()))
                     {
                         //This is when we are at the end of the stream - Means we received the end of stream signal from the server
+                        //Maybe need to throw an exception that can be handled by our supervisor
+                        EventStream.Instance.Publish(new EndpointTerminatedEvent());
                         return;
                     }
 
@@ -76,16 +81,12 @@ namespace Proto.Client
                             _logger.LogDebug("Received PID Response");
 
                             //TODO: Just set the address and fire off the endpoitnconnectedevent
-                            if (_pidRequester != null)
-                            {
-                                _logger.LogDebug($"Sending PID Response to requester {_pidRequester}");
-                                context.Send(_pidRequester, message);
-                            }
-                            else
-                            {
-                                _logger.LogDebug($"Storing PID Response for later");
-                                _clientHostPIDResponse = pidResponse;
-                            }
+                            ProcessRegistry.Instance.Address = pidResponse.HostProcess.Address;
+
+                            context.Send(context.Parent, new EndpointConnectedEvent{
+                                Address = pidResponse.HostProcess.Address
+                            });
+                            
                             context.Send(context.Self, "listen");
                             return;
 
