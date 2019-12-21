@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Proto.Client.TestMessages;
+using Microsoft.Extensions.Logging;
 using Proto.Remote;
 
 namespace Proto.Client.TestNode
@@ -9,10 +10,15 @@ namespace Proto.Client.TestNode
     {
         static void Main(string[] args)
         {
+            Log.SetLoggerFactory(LoggerFactory.Create(builder => {
+                builder.AddConsole();
+                builder.SetMinimumLevel(LogLevel.Debug);
+            }));
+            var logger = Log.CreateLogger("Proto.Client.TestNode");
 
             Remote.Remote.Start("localhost", 44000);
             ClientHost.Start("localhost", 55000);
-
+            logger.LogInformation("Remote + ClientHost Started");
             var props = Props.FromProducer(() => new EchoActor());
             Remote.Remote.RegisterKnownKind("EchoActor", props);
             

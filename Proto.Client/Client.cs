@@ -12,7 +12,11 @@ namespace Proto.Client
         private static RemoteConfig _config;
         private static TimeSpan _connectionTimeout;
         private static int _port;
-
+        
+        static Client(){
+            Serialization.RegisterFileDescriptor(ProtosReflection.Descriptor);
+        }
+        
         public static void ConfigureConnection(string hostname, int port, RemoteConfig config, TimeSpan connectionTimeout)
         {
             _port = port;

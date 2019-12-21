@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Divergic.Logging.Xunit;
 using Microsoft.Extensions.Logging;
 using Proto.Remote;
 using Xunit;
@@ -8,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace Proto.Client.Tests
 {
-    // [Collection("ClientTests")]
+    [Collection("ClientTests")]
     public class BasicTests
     {
         private readonly RemoteManager _remoteManager;
@@ -34,8 +33,8 @@ namespace Proto.Client.Tests
                 logger.LogInformation(msg.ToString());
             });
 
-            Remote.Remote.Start("localhost", 44000);
-            ClientHost.Start("localhost", 55000);
+            // Remote.Remote.Start("localhost", 44000);
+            // ClientHost.Start("localhost", 55000);
             
             Client.ConfigureConnection("localhost", 55000, new RemoteConfig(), TimeSpan.FromSeconds(10));
             logger.LogInformation("Getting Client Context");

@@ -7,6 +7,8 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />
     <PackageReference Include="Proto.Actor" Version="0.2.134-cluster-experiments" />
     <PackageReference Include="Proto.Remote" Version="0.2.134-cluster-experiments" />
   </ItemGroup>

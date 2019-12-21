@@ -11,7 +11,7 @@ namespace Proto.Client
 {
     public static class ClientHost 
     {
-        private static readonly ILogger Logger = Log.CreateLogger(typeof(ClientHost).FullName);
+        private static readonly ILogger _logger = Log.CreateLogger(typeof(ClientHost).FullName);
         private static Server _server;
 
         static ClientHost()
@@ -24,10 +24,7 @@ namespace Proto.Client
             Start(hostname, port, new RemoteConfig());
         }
         public static void Start(string hostname, int port, RemoteConfig config){
-            
-            
-
-            
+                        
 
             var clientEndpointManager = new ClientHostEndpointManager();
             
@@ -39,7 +36,10 @@ namespace Proto.Client
                
             };
 
+            _logger.LogDebug($"Starting Proto.ClientHost on {hostname}:{port}");
             _server.Start();
+
+            
 
             
         }
@@ -57,12 +57,12 @@ namespace Proto.Client
                     _server.KillAsync().Wait(10000);
                 }
                 
-                Logger.LogDebug($"Proto.Actor ClientHost stopped on {ProcessRegistry.Instance.Address}. Graceful:{gracefull}");
+                _logger.LogDebug($"Proto.Actor ClientHost stopped on {ProcessRegistry.Instance.Address}. Graceful:{gracefull}");
             }
             catch(Exception ex)
             {
                 _server.KillAsync().Wait(1000);
-                Logger.LogError($"Proto.Actor ClientHost stopped on {ProcessRegistry.Instance.Address} with error:\n{ex.Message}");
+                _logger.LogError($"Proto.Actor ClientHost stopped on {ProcessRegistry.Instance.Address} with error:\n{ex.Message}");
             }
         }
         
