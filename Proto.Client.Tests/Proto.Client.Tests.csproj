@@ -12,8 +12,8 @@
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
-    <PackageReference Include="Proto.Actor" Version="0.2.134-cluster-experiments" />
-    <PackageReference Include="Proto.Remote" Version="0.2.134-cluster-experiments" />
+    <PackageReference Include="Proto.Actor" Version="0.2.135-cluster-experiments" />
+    <PackageReference Include="Proto.Remote" Version="0.2.135-cluster-experiments" />
   </ItemGroup>
 
   <ItemGroup>
