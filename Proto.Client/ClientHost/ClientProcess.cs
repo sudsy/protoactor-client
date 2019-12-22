@@ -31,23 +31,22 @@ namespace Proto.Client
             
             var (message, sender, header) = MessageEnvelope.Unwrap(envelope);
             
-            _logger.LogDebug($"Sending Client Message {message.GetType()} to {_clientTargetPID}");
+            _logger.LogDebug($"Sending Client Message {message.GetType()} to {_clientTargetPID} via {_endpointWriterPID}");
+            
             
             var env = new RemoteDeliver(header, message, _clientTargetPID, sender, Serialization.DefaultSerializerId);
+           
+            var messageBatch = new ClientMessageBatch
+            {
+                Address = _endpointWriterPID.Address,
+                Batch = env.getMessageBatch()
+            };
+            RootContext.Empty.Send(_endpointWriterPID, messageBatch);
 
-            if (_endpointWriterPID.Address == ProcessRegistry.Instance.Address)
-            {
-                RootContext.Empty.Send(_endpointWriterPID, env);
-            }
-            else
-            {
-                var messageBatch = new ClientMessageBatch
-                {
-                    Address = _endpointWriterPID.Address,
-                    Batch = env.getMessageBatch()
-                };
-                RootContext.Empty.Send(_endpointWriterPID, messageBatch);
-            }
+           
+            
+
+            
             
             
             

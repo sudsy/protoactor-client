@@ -126,7 +126,7 @@ namespace Proto.Client
             {
                 var endpointWriter = RootContext.Empty.SpawnNamed(
                     Props.FromProducer(() => new ClientHostEndpointWriter(responseStream))
-                        .WithGuardianSupervisorStrategy(Supervision.AlwaysRestartStrategy), clientId);
+                        .WithGuardianSupervisorStrategy(Supervision.AlwaysRestartStrategy), $"$client/{clientId}");
 
                 return endpointWriter;
 
@@ -135,7 +135,7 @@ namespace Proto.Client
             {
                 _logger.LogDebug("Existing endpointwriter found - waiting for shutdown");
                 //Still hanging around from last connection
-                var endpointWriterPID = new PID {Address = ProcessRegistry.Instance.Address, Id = clientId};
+                var endpointWriterPID = new PID {Address = ProcessRegistry.Instance.Address, Id = $"$client/{clientId}"};
                 endpointWriterPID.Stop();
                 await Task.Delay(TimeSpan.FromMilliseconds(100));
                 _logger.LogDebug("Paused for 100 msec to allow shutdown");

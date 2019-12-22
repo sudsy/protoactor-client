@@ -16,6 +16,8 @@ namespace Proto.Client
 
         static ClientHost()
         {
+            
+            ProcessRegistry.Instance = new ClientHostProcessRegistry(ProcessRegistry.Instance);
             Serialization.RegisterFileDescriptor(ProtosReflection.Descriptor);
         }
         
@@ -25,7 +27,7 @@ namespace Proto.Client
         }
         public static void Start(string hostname, int port, RemoteConfig config){
                         
-            ProcessRegistry.Instance = new ClientHostProcessRegistry();
+            
             var clientEndpointManager = new ClientHostEndpointManager();
             
 

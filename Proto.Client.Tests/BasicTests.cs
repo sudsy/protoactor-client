@@ -8,14 +8,14 @@ using Xunit.Abstractions;
 
 namespace Proto.Client.Tests
 {
-    // [Collection("ClientTests")]
+    [Collection("ClientTests")]
     public class BasicTests
     {
         
 
         public BasicTests(ITestOutputHelper testOutputHelper)
         {
-            Serialization.RegisterFileDescriptor(ProtosReflection.Descriptor);
+            Serialization.RegisterFileDescriptor(Proto.Client.TestMessages.ProtosReflection.Descriptor);
             // _remoteManager = remoteManager;
            
             var logFactory = LoggerFactory.Create(builder => {
@@ -27,7 +27,7 @@ namespace Proto.Client.Tests
         }
 
         [Fact (Timeout = 30000)]
-        public async Task CanCreateAndDisposeClientAsync()
+        public async Task CanRespondToPing()
         {
             var tcs = new TaskCompletionSource<Pong>();
             var logger = Log.CreateLogger("CanCreateAndDisposeClientAsync");
