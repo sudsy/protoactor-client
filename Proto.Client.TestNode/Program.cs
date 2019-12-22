@@ -10,6 +10,8 @@ namespace Proto.Client.TestNode
     {
         static void Main(string[] args)
         {
+            Serialization.RegisterFileDescriptor(Proto.Client.TestMessages.ProtosReflection.Descriptor);
+
             Log.SetLoggerFactory(LoggerFactory.Create(builder => {
                 builder.AddConsole();
                 builder.SetMinimumLevel(LogLevel.Debug);
@@ -21,6 +23,8 @@ namespace Proto.Client.TestNode
             logger.LogInformation("Remote + ClientHost Started");
             var props = Props.FromProducer(() => new EchoActor());
             Remote.Remote.RegisterKnownKind("EchoActor", props);
+
+            RootContext.Empty.SpawnNamed(props, "EchoActorInstance");
             
             Console.ReadLine();
             

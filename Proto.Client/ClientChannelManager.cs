@@ -18,6 +18,7 @@ namespace Proto.Client
         private string _address;
         private PID _requestor;
         private Channel _channel;
+        private PID _clientStreamManager;
         private CancellationTokenSource _cancelFutureRetries = new CancellationTokenSource();
 
         public ClientChannelManager(RemoteConfig config, TimeSpan connectionTimeout)
@@ -86,13 +87,16 @@ namespace Proto.Client
                     _requestor = context.Sender;
                     _channel = new Channel(address, config.ChannelCredentials, config.ChannelOptions);
                     // _logger.LogDebug("Creating Remoting Client");
-                    var clientChannel = context.Spawn(Props.FromProducer(() => new ClientStreamManager(_channel, _clientId, connectionTimeout)));
+                    _clientStreamManager = context.Spawn(Props.FromProducer(() => new ClientStreamManager(_channel, _clientId, connectionTimeout)));
                     
                     
                     
                     break;
                 case EndpointConnectedEvent connectedEvent:
                     context.Send(_requestor, connectedEvent);
+                    break;
+                case RemoteDeliver _:
+                    context.Forward(_clientStreamManager);
                     break;
             }
             return Actor.Done;

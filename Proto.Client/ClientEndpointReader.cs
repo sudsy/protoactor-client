@@ -81,7 +81,10 @@ namespace Proto.Client
                             _logger.LogDebug("Received PID Response");
 
                             //TODO: Just set the address and fire off the endpoitnconnectedevent
-                            ProcessRegistry.Instance.Address = pidResponse.HostProcess.Address;
+                            var clientProcessRegistry = (ClientProcessRegistry)ProcessRegistry.Instance;
+                            clientProcessRegistry.Address = pidResponse.HostProcess.Address;
+                            clientProcessRegistry.BaseId = pidResponse.HostProcess.Id;
+
 
                             context.Send(context.Parent, new EndpointConnectedEvent{
                                 Address = pidResponse.HostProcess.Address

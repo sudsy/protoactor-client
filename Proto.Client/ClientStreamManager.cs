@@ -29,7 +29,7 @@ namespace Proto.Client
             supervisor.EscalateFailure(cause, message);
         }
 
-        public Task ReceiveAsync(IContext context)
+        public async Task ReceiveAsync(IContext context)
         {
             switch(context.Message){
                 case Started _:
@@ -50,8 +50,32 @@ namespace Proto.Client
                 case EndpointConnectedEvent _:
                     context.Forward(context.Parent);
                     break;
+                case RemoteDeliver rd:
+                    var batch = rd.getMessageBatch();
+            
+                    _logger.LogDebug($"Sending RemoteDeliver message {rd.Message.GetType()} to {rd.Target.Id} address {rd.Target.Address} from {rd.Sender}");
+                
+                    var clientBatch = new ClientMessageBatch()
+                    {
+                        Address = rd.Target.Address,
+                        Batch = batch
+                    };
+                    try
+                    {
+
+                        await _clientStreams.RequestStream.WriteAsync(clientBatch);
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Stash();
+                        throw ex;
+                    }
+                    
+                    
+                    _logger.LogDebug($"Sent RemoteDeliver message {rd.Message.GetType()} to {rd.Target.Id} address {rd.Target.Address} from {rd.Sender}");
+                    break;
             }
-            return Actor.Done;
+            
         }
     }
 }

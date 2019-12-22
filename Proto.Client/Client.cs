@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Proto.Remote;
 
 namespace Proto.Client
 {
     public class Client
     {
+        private static readonly ILogger _logger = Log.CreateLogger<Client>();
         private static ClientContext _clientContext;
         private static PID _channelmanager;
         private static string _hostname;
@@ -25,12 +27,17 @@ namespace Proto.Client
             _connectionTimeout = connectionTimeout;
             
         }
+
+      
+
         public static async Task<ClientContext> GetClientContext()
         {
             if (_clientContext != null)
             {
                 return _clientContext;
             }
+
+            ProcessRegistry.Instance = new ClientProcessRegistry();
 
             if (_channelmanager is null)
             {
@@ -41,7 +48,32 @@ namespace Proto.Client
 
             _clientContext = clientContext;
 
+            
+
             return clientContext;
+        }
+
+        internal static void SendMessage(PID target, object envelope, int serializerId)
+        {
+
+            
+            var (message, sender, header) = MessageEnvelope.Unwrap(envelope);
+            
+            
+            var env = new RemoteDeliver(header, message, target, sender, serializerId);
+
+            if (_channelmanager == null)
+            {
+                _logger.LogWarning("Tried to deliver message when clientEndpoint manager was unavailable");
+                EventStream.Instance.Publish(new DeadLetterEvent(target, message, sender));
+                // throw new ApplicationException("Could not send message, no connection available.");
+            }
+            else
+            {
+                RootContext.Empty.Send(_channelmanager, env);    
+            }
+            
+
         }
 
         private static void OnContextDispose()
