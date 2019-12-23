@@ -37,7 +37,7 @@ namespace Proto.Client
                 return _clientContext;
             }
 
-            ProcessRegistry.Instance = new ClientProcessRegistry();
+            ProcessRegistry.Instance = new ClientProcessRegistry(ProcessRegistry.Instance);
 
             if (_channelmanager is null)
             {
