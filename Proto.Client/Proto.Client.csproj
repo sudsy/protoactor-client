@@ -1,14 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Proto.Actor" Version="0.2.137-cluster-experiments" />
-    <PackageReference Include="Proto.Remote" Version="0.2.137-cluster-experiments" />
-    <PackageReference Include="Grpc" Version="2.26.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.26.0" PrivateAssets="All" />
+    <PackageReference Include="Proto.Actor" Version="0.11.0" />
+    <PackageReference Include="Proto.Remote.GrpcCore" Version="0.11.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.33.1" />
+
   </ItemGroup>
   
+
   <ItemGroup>
     <Protobuf Include="Protos.proto" GrpcServices="Both" AdditionalImportDirs="$(NugetPackageRoot)proto.actor/0.2.137-cluster-experiments/protos;$(NugetPackageRoot)proto.remote/0.2.137-cluster-experiments/protos" />
   </ItemGroup>

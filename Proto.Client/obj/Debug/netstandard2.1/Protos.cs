@@ -29,26 +29,30 @@ namespace Proto.Client {
             "dWVzdBIdCgljbGllbnRQSUQYASABKAsyCi5hY3Rvci5QSUQiMAoQUHJveHlQ",
             "aWRSZXNwb25zZRIcCghwcm94eVBJRBgCIAEoCzIKLmFjdG9yLlBJRCIWChRD",
             "bGllbnRIb3N0UElEUmVxdWVzdCI4ChVDbGllbnRIb3N0UElEUmVzcG9uc2US",
-            "HwoLaG9zdFByb2Nlc3MYASABKAsyCi5hY3Rvci5QSUQiJQoSQ2xpZW50TWVz",
-            "c2FnZUJhdGNoEg8KB2FkZHJlc3MYASABKAkyWQoOQ2xpZW50UmVtb3RpbmcS",
-            "RwoNQ29ubmVjdENsaWVudBIaLmNsaWVudC5DbGllbnRNZXNzYWdlQmF0Y2ga",
-            "FC5yZW1vdGUuTWVzc2FnZUJhdGNoIgAoATABQg+qAgxQcm90by5DbGllbnRi",
-            "BnByb3RvMw=="));
+            "HwoLaG9zdFByb2Nlc3MYASABKAsyCi5hY3Rvci5QSUQiSgoSQ2xpZW50TWVz",
+            "c2FnZUJhdGNoEg8KB2FkZHJlc3MYASABKAkSIwoFYmF0Y2gYAiABKAsyFC5y",
+            "ZW1vdGUuTWVzc2FnZUJhdGNoMlkKDkNsaWVudFJlbW90aW5nEkcKDUNvbm5l",
+            "Y3RDbGllbnQSGi5jbGllbnQuQ2xpZW50TWVzc2FnZUJhdGNoGhQucmVtb3Rl",
+            "Lk1lc3NhZ2VCYXRjaCIAKAEwAUIPqgIMUHJvdG8uQ2xpZW50YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.ProtosReflection.Descriptor, global::Proto.Remote.ProtosReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ProxyPidRequest), global::Proto.Client.ProxyPidRequest.Parser, new[]{ "ClientPID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ProxyPidResponse), global::Proto.Client.ProxyPidResponse.Parser, new[]{ "ProxyPID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientHostPIDRequest), global::Proto.Client.ClientHostPIDRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientHostPIDResponse), global::Proto.Client.ClientHostPIDResponse.Parser, new[]{ "HostProcess" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientMessageBatch), global::Proto.Client.ClientMessageBatch.Parser, new[]{ "Address" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ProxyPidRequest), global::Proto.Client.ProxyPidRequest.Parser, new[]{ "ClientPID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ProxyPidResponse), global::Proto.Client.ProxyPidResponse.Parser, new[]{ "ProxyPID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientHostPIDRequest), global::Proto.Client.ClientHostPIDRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientHostPIDResponse), global::Proto.Client.ClientHostPIDResponse.Parser, new[]{ "HostProcess" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Client.ClientMessageBatch), global::Proto.Client.ClientMessageBatch.Parser, new[]{ "Address", "Batch" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Messages
-  public sealed partial class ProxyPidRequest : pb::IMessage<ProxyPidRequest> {
+  public sealed partial class ProxyPidRequest : pb::IMessage<ProxyPidRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<ProxyPidRequest> _parser = new pb::MessageParser<ProxyPidRequest>(() => new ProxyPidRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -127,6 +131,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (clientPID_ != null) {
         output.WriteRawTag(10);
         output.WriteMessage(ClientPID);
@@ -134,7 +141,21 @@ namespace Proto.Client {
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (clientPID_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(ClientPID);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
@@ -164,6 +185,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -179,11 +203,37 @@ namespace Proto.Client {
           }
         }
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (clientPID_ == null) {
+              ClientPID = new global::Proto.PID();
+            }
+            input.ReadMessage(ClientPID);
+            break;
+          }
+        }
+      }
+    }
+    #endif
 
   }
 
-  public sealed partial class ProxyPidResponse : pb::IMessage<ProxyPidResponse> {
+  public sealed partial class ProxyPidResponse : pb::IMessage<ProxyPidResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<ProxyPidResponse> _parser = new pb::MessageParser<ProxyPidResponse>(() => new ProxyPidResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -262,6 +312,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (proxyPID_ != null) {
         output.WriteRawTag(18);
         output.WriteMessage(ProxyPID);
@@ -269,7 +322,21 @@ namespace Proto.Client {
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (proxyPID_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(ProxyPID);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
@@ -299,6 +366,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -314,11 +384,37 @@ namespace Proto.Client {
           }
         }
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 18: {
+            if (proxyPID_ == null) {
+              ProxyPID = new global::Proto.PID();
+            }
+            input.ReadMessage(ProxyPID);
+            break;
+          }
+        }
+      }
+    }
+    #endif
 
   }
 
-  public sealed partial class ClientHostPIDRequest : pb::IMessage<ClientHostPIDRequest> {
+  public sealed partial class ClientHostPIDRequest : pb::IMessage<ClientHostPIDRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<ClientHostPIDRequest> _parser = new pb::MessageParser<ClientHostPIDRequest>(() => new ClientHostPIDRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -383,10 +479,23 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
@@ -407,6 +516,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -415,11 +527,30 @@ namespace Proto.Client {
             break;
         }
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+        }
+      }
+    }
+    #endif
 
   }
 
-  public sealed partial class ClientHostPIDResponse : pb::IMessage<ClientHostPIDResponse> {
+  public sealed partial class ClientHostPIDResponse : pb::IMessage<ClientHostPIDResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<ClientHostPIDResponse> _parser = new pb::MessageParser<ClientHostPIDResponse>(() => new ClientHostPIDResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -498,6 +629,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (hostProcess_ != null) {
         output.WriteRawTag(10);
         output.WriteMessage(HostProcess);
@@ -505,7 +639,21 @@ namespace Proto.Client {
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (hostProcess_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(HostProcess);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
@@ -535,6 +683,9 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -550,11 +701,37 @@ namespace Proto.Client {
           }
         }
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (hostProcess_ == null) {
+              HostProcess = new global::Proto.PID();
+            }
+            input.ReadMessage(HostProcess);
+            break;
+          }
+        }
+      }
+    }
+    #endif
 
   }
 
-  public sealed partial class ClientMessageBatch : pb::IMessage<ClientMessageBatch> {
+  public sealed partial class ClientMessageBatch : pb::IMessage<ClientMessageBatch>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<ClientMessageBatch> _parser = new pb::MessageParser<ClientMessageBatch>(() => new ClientMessageBatch());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -580,6 +757,7 @@ namespace Proto.Client {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public ClientMessageBatch(ClientMessageBatch other) : this() {
       address_ = other.address_;
+      batch_ = other.batch_ != null ? other.batch_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -591,14 +769,22 @@ namespace Proto.Client {
     /// <summary>Field number for the "address" field.</summary>
     public const int AddressFieldNumber = 1;
     private string address_ = "";
-    /// <summary>
-    /// remote.MessageBatch batch = 2;
-    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string Address {
       get { return address_; }
       set {
         address_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "batch" field.</summary>
+    public const int BatchFieldNumber = 2;
+    private global::Proto.Remote.MessageBatch batch_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Proto.Remote.MessageBatch Batch {
+      get { return batch_; }
+      set {
+        batch_ = value;
       }
     }
 
@@ -616,6 +802,7 @@ namespace Proto.Client {
         return true;
       }
       if (Address != other.Address) return false;
+      if (!object.Equals(Batch, other.Batch)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -623,6 +810,7 @@ namespace Proto.Client {
     public override int GetHashCode() {
       int hash = 1;
       if (Address.Length != 0) hash ^= Address.GetHashCode();
+      if (batch_ != null) hash ^= Batch.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -636,20 +824,48 @@ namespace Proto.Client {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (Address.Length != 0) {
         output.WriteRawTag(10);
         output.WriteString(Address);
       }
+      if (batch_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Batch);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Address.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Address);
+      }
+      if (batch_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Batch);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
       if (Address.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Address);
+      }
+      if (batch_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Batch);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -665,11 +881,20 @@ namespace Proto.Client {
       if (other.Address.Length != 0) {
         Address = other.Address;
       }
+      if (other.batch_ != null) {
+        if (batch_ == null) {
+          Batch = new global::Proto.Remote.MessageBatch();
+        }
+        Batch.MergeFrom(other.Batch);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -680,9 +905,42 @@ namespace Proto.Client {
             Address = input.ReadString();
             break;
           }
+          case 18: {
+            if (batch_ == null) {
+              Batch = new global::Proto.Remote.MessageBatch();
+            }
+            input.ReadMessage(Batch);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Address = input.ReadString();
+            break;
+          }
+          case 18: {
+            if (batch_ == null) {
+              Batch = new global::Proto.Remote.MessageBatch();
+            }
+            input.ReadMessage(Batch);
+            break;
+          }
         }
       }
     }
+    #endif
 
   }
 
