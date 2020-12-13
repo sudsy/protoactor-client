@@ -12,7 +12,7 @@ namespace Proto.Client.Tests
     public class BasicTests
     {
         
-
+      
         public BasicTests(ITestOutputHelper testOutputHelper)
         {
             Serialization.RegisterFileDescriptor(Proto.Client.TestMessages.ProtosReflection.Descriptor);
@@ -34,6 +34,8 @@ namespace Proto.Client.Tests
             EventStream.Instance.Subscribe(msg => {
                 logger.LogInformation(msg.ToString());
             });
+
+            
 
             // Remote.Remote.Start("localhost", 44000);
             // ClientHost.Start("localhost", 55000);
