@@ -1,65 +1,33 @@
-﻿// using System;
-// using System.Threading.Tasks;
-// using Proto.Client.TestMessages;
-// using Microsoft.Extensions.Logging;
-// using Proto.Remote;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Hosting;
 
 namespace Proto.Client.TestNode
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            // Serialization.RegisterFileDescriptor(Proto.Client.TestMessages.ProtosReflection.Descriptor);
-
-            // Log.SetLoggerFactory(LoggerFactory.Create(builder => {
-            //     builder.AddConsole();
-            //     builder.SetMinimumLevel(LogLevel.Debug);
-            // }));
-            // var logger = Log.CreateLogger("Proto.Client.TestNode");
-
-            // Remote.Remote.Start("localhost", 44000);
-            // ClientHost.Start("localhost", 55000);
-            // logger.LogInformation("Remote + ClientHost Started");
-            // var props = Props.FromProducer(() => new EchoActor());
-            // Remote.Remote.RegisterKnownKind("EchoActor", props);
-
-            // RootContext.Empty.SpawnNamed(props, "EchoActorInstance");
-            
-            // Console.ReadLine();
-            
+            // AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            CreateHostBuilder(args).Build().Run();
         }
+
+        // Additional configuration is required to successfully run gRPC on macOS.
+        // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.ListenLocalhost(5000, o => o.Protocols = HttpProtocols.Http2);
+                    });
+                    webBuilder.UseStartup<Startup>();
+                });
     }
-
-
-//      public class EchoActor : IActor
-//     {
-     
-
-//         public EchoActor()
-//         {
-           
-//         }
-
-//         public Task ReceiveAsync(IContext context)
-//         {
-            
-//             switch (context.Message)
-//             {
-//                 case Ping ping:
-//                     try
-//                     {
-//                         context.Respond(new Pong {Message = $"{context.Self.Address} {ping.Message}"});
-//                     }
-//                     catch (Exception ex)
-//                     {
-//                         Console.WriteLine(ex.Message);
-//                     }
-                   
-//                     return Actor.Done;
-//                 default:
-//                     return Actor.Done;
-//             }
-//         }
-//     }
 }
