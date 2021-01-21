@@ -30,5 +30,5 @@ message ClientMessageBatch {
 
 
 service ClientRemoting {
-    rpc ConnectClient (stream ClientMessageBatch) returns (stream remote.MessageBatch) {}
+    rpc Send (stream remote.Unit) returns (remote.MessageBatch) {}
 }  

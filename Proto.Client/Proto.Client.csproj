@@ -5,9 +5,9 @@
     <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Proto.Actor" Version="0.11.0" />
-    <PackageReference Include="Proto.Remote.GrpcCore" Version="0.11.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.33.1" />
+    <PackageReference Include="Proto.Actor" Version="0.12.0" />
+    <PackageReference Include="Proto.Remote.GrpcNet" Version="0.12.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
 
   </ItemGroup>
   
