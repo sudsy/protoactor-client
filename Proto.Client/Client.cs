@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Proto.Remote;
 using Proto.Remote.GrpcNet;
 
 namespace Proto.Client
@@ -10,42 +13,76 @@ namespace Proto.Client
     {
         private ActorSystem System;
         private GrpcNetRemoteConfig _config;
+        private string _clientHost;
+        private ClientReceiveEndpointReader? _clientReceiveEndpointReader;
+        private IEndpointManager? _clientSendEndpointManager;
+        private int _clientHostPort;
+        private Guid _clientGUID;
+        private ClientRootContext _clientRootContext;
+        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+
         public bool Started { get; private set; }
         private readonly ILogger _logger = Log.CreateLogger<Client>();
 
-        public Client(ActorSystem system, GrpcNetRemoteConfig config)
+        public RemoteConfigBase Config => _config;
+
+        public Client(ActorSystem system, GrpcNetRemoteConfig config, string clientHost, int clientHostPort)
         {
             System = system;
             _config = config;
-            
+            _clientHost = clientHost;
+            _clientHostPort = clientHostPort;
+            _clientGUID = Guid.NewGuid();
+            _clientRootContext = new ClientRootContext(system.Root, _clientGUID);
             System.Extensions.Register(config.Serialization);
         }
 
 
-        public Task StartAsync()
+        public async Task<ClientRootContext> StartAsync()
         {
-            lock (this)
+            await semaphoreSlim.WaitAsync();
+            try
             {
                 if (Started)
-                    return Task.CompletedTask;
+                    return _clientRootContext;
                 var channelProvider = new GrpcNetChannelProvider(_config);
-                // _endpointManager = new EndpointManager(System, Config, channelProvider);
-                // _endpointReader = new EndpointReader(System, _endpointManager, Config.Serialization);
-                // _healthCheck = new HealthServiceImpl();
+                
+                //Set up the sending connection using the existing Proto.Remote system
+                _clientSendEndpointManager = new ClientSendEndpointManager(System, Config, channelProvider, $"{_clientHost}:{_clientHostPort}");
+                
+                //Set up the receiving connection
+                _clientReceiveEndpointReader = new ClientReceiveEndpointReader(System, Config, channelProvider, _clientSendEndpointManager, $"{_clientHost}:{_clientHostPort}", _clientGUID);
+              
+                
+              
+                // _healthCheck = new HealthServiceImpl(); //we really want a health check to shut down the connection on the server in case the client disappears
 
-               
+                await _clientReceiveEndpointReader.ConnectAsync();
+           
                 
                
-                // System.SetAddress(Config.AdvertisedHost ?? Config.Host,
-                //     Config.AdvertisedPort ?? boundPort
-                // );
-                // _endpointManager.Start();
+                System.SetAddress(_clientHost, _clientHostPort);
+                
+                _clientSendEndpointManager.Start();
                 // _logger.LogInformation("Starting Proto.Client server on {Host}:{Port} ({Address})", Config.Host,
                 //     Config.Port, System.Address
                 // );
                 Started = true;
-                return Task.CompletedTask;
+                return _clientRootContext;
+                
+            }finally{
+                semaphoreSlim.Release();
             }
+
+            
+            
+                
+        }
+
+        public Task StopAsync()
+        {
+            //Shut down the connections here
+            return Task.CompletedTask;
         }
     }
 

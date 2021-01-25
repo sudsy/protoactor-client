@@ -3,14 +3,14 @@ using Proto.Remote;
 
 namespace Proto.Client
 {
-    public class ClientEndpointManager : IEndpointManager
+    public class ClientSendEndpointManager : IEndpointManager
     {
-        private static readonly ILogger Logger = Log.CreateLogger<ClientEndpointManager>();
+        private static readonly ILogger Logger = Log.CreateLogger<ClientSendEndpointManager>();
         private readonly ActorSystem _system;
         private RemoteClientHostProcess _remoteClientHostProcessSingleton;
         private PID _endpointActorPid;
 
-        public ClientEndpointManager(ActorSystem system, RemoteConfigBase remoteConfig, IChannelProvider channelProvider, string clientHostAddress){
+        public ClientSendEndpointManager(ActorSystem system, RemoteConfigBase remoteConfig, IChannelProvider channelProvider, string clientHostAddress){
             _system = system;
             var nullPID = new PID();
             _remoteClientHostProcessSingleton = new RemoteClientHostProcess(_system, this, nullPID);
@@ -32,6 +32,10 @@ namespace Proto.Client
             //It doesn't matter which address we are sending to, we send everything through the clienthost
 
             return _endpointActorPid;
+        }
+
+        public void Start(){
+            //This does nothing at the moment
         }
     }
 }
