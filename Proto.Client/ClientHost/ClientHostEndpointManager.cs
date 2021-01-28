@@ -42,7 +42,7 @@ namespace Proto.Client.ClientHost
             var clientActorRoot = request.ClientActorRoot;
             _clientActorRootLength = clientActorRoot.Length;
             var props = Props
-                .FromProducer(() => new ClientEndpointActor(responseStream))
+                .FromProducer(() => new ClientProxyActor(request, responseStream, _remoteConfig))
                 .WithMailbox(() => new EndpointWriterMailbox(_system,
                         _remoteConfig.EndpointWriterOptions.EndpointWriterBatchSize, clientActorRoot
                     )
