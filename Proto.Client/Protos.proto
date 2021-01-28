@@ -6,29 +6,11 @@ import "Proto.Actor/Protos.proto";
 import "Proto.Remote/Protos.proto";
 
 
-message ProxyPidRequest {
-    actor.PID clientPID = 1;
-}
-
-message ProxyPidResponse {
-    actor.PID proxyPID = 2;
-}
-
-message ClientHostPIDRequest {
-    
-}
-
-message ClientHostPIDResponse {
-    actor.PID hostProcess = 1;
-}
-
-
-message ClientMessageBatch {
-    string address = 1;
-    remote.MessageBatch batch = 2;
+message ClientDetails {
+    string ClientActorRoot = 1;
 }
 
 
 service ClientRemoting {
-    rpc ClientMessageSender (remote.Unit) returns (stream remote.MessageBatch) {}
+    rpc ClientMessageSender (ClientDetails) returns (stream remote.MessageBatch) {}
 }  

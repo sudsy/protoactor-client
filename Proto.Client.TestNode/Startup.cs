@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Proto.Client.ClientHost;
 using Proto.Remote.GrpcNet;
 
 namespace Proto.Client.TestNode
@@ -33,7 +34,6 @@ namespace Proto.Client.TestNode
             }
 
             app.UseRouting();
-            app.UseProtoRemote(); //This is a requirement of ProtoClient - bundle it in
             app.UseProtoClient(); 
 
             

@@ -2,13 +2,13 @@ using Proto.Remote;
 
 namespace Proto.Client
 {
-    public class RemoteClientHostProcess : Process
+    public class Client_RemoteProcess : Process
     {
         private IEndpointManager _endpointManager;
         private PID _pid;
         private PID? _endpoint;
 
-        public RemoteClientHostProcess(ActorSystem system, IEndpointManager endpointManager, PID pid) : base(system)
+        public Client_RemoteProcess(ActorSystem system, IEndpointManager endpointManager, PID pid) : base(system)
         {
             //This is identical to RemoteProcess except for the use of IEndpointManager
             //TODO, implement IEndpointmanager in protoactor
@@ -24,7 +24,7 @@ namespace Proto.Client
          private void Send(object msg)
         {
             object message;
-            _endpoint ??= _endpointManager.GetEndpoint(_pid.Address);
+            _endpoint ??= _endpointManager.GetEndpoint(_pid);
             switch (msg)
             {
                 case Watch w:

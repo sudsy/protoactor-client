@@ -7,17 +7,17 @@ namespace Proto.Client
 
     public class ClientRootContext : RootContextDecorator
     {
-        private Guid _clientGUID;
+        private String _clientActorRoot;
 
-        public ClientRootContext(IRootContext context, Guid clientGUID) : base(context)
+        public ClientRootContext(IRootContext context, string clientActorRoot) : base(context)
         {
-            _clientGUID = clientGUID;
+            _clientActorRoot = clientActorRoot;
         }
 
 
         public override PID SpawnNamed(Props props, string name)
         {
-            return base.SpawnNamed(props, $"$clients/{_clientGUID}/{name}");
+            return base.SpawnNamed(props, $"{_clientActorRoot}/{name}");
         }
       
        

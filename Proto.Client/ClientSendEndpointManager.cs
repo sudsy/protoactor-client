@@ -7,13 +7,13 @@ namespace Proto.Client
     {
         private static readonly ILogger Logger = Log.CreateLogger<ClientSendEndpointManager>();
         private readonly ActorSystem _system;
-        private RemoteClientHostProcess _remoteClientHostProcessSingleton;
+        private Client_RemoteProcess _remoteClientHostProcessSingleton;
         private PID _endpointActorPid;
 
         public ClientSendEndpointManager(ActorSystem system, RemoteConfigBase remoteConfig, IChannelProvider channelProvider, string clientHostAddress){
             _system = system;
             var nullPID = new PID();
-            _remoteClientHostProcessSingleton = new RemoteClientHostProcess(_system, this, nullPID);
+            _remoteClientHostProcessSingleton = new Client_RemoteProcess(_system, this, nullPID);
             
             Logger.LogDebug("[ClientEndpointManager] Requesting new endpoint for {Address}", clientHostAddress);
             var props = Props
@@ -27,7 +27,7 @@ namespace Proto.Client
             _system.ProcessRegistry.RegisterHostResolver(pid => _remoteClientHostProcessSingleton);
         }
 
-        public PID? GetEndpoint(string address)
+        public PID? GetEndpoint(PID destination)
         {
             //It doesn't matter which address we are sending to, we send everything through the clienthost
 

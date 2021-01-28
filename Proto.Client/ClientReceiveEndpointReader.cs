@@ -18,7 +18,7 @@ namespace Proto.Client
         private GrpcNetChannelProvider _channelProvider;
         private string _address;
         private IEndpointManager _endpointManager;
-        private Guid clientGUID;
+        private String _clientActorRoot;
         private ChannelBase? _channel;
         private Remoting.RemotingClient? _protoRemoteClient;
         private int _serializerId;
@@ -26,14 +26,14 @@ namespace Proto.Client
         private AsyncServerStreamingCall<MessageBatch>? _receiveMessagesStreamingCall;
         
 
-        public ClientReceiveEndpointReader(ActorSystem system, RemoteConfigBase config, GrpcNetChannelProvider channelProvider, IEndpointManager endpointManager, string address, Guid clientGUID)
+        public ClientReceiveEndpointReader(ActorSystem system, RemoteConfigBase config, GrpcNetChannelProvider channelProvider, IEndpointManager endpointManager, string address, string clientActorRoot)
         {
             this._system = system;
             this._remoteConfig = config;
             this._channelProvider = channelProvider;
             this._address = address;
             this._endpointManager = endpointManager;
-            this.clientGUID = clientGUID;
+            this._clientActorRoot = clientActorRoot;
         }
 
         public async Task ConnectAsync()
@@ -58,7 +58,7 @@ namespace Proto.Client
             
             _clientRemotingClient = new ClientRemoting.ClientRemotingClient(_channel);
 
-            _receiveMessagesStreamingCall = _clientRemotingClient.ClientMessageSender(new Unit());
+            _receiveMessagesStreamingCall = _clientRemotingClient.ClientMessageSender(new ClientDetails{ClientActorRoot = _clientActorRoot});
 
             Logger.LogDebug("[ClientReceiveEndpointReader] Connected client for address {Address}", _address);
 
@@ -166,7 +166,7 @@ namespace Proto.Client
             // );
 
             var rt = new RemoteTerminate(target, msg.Who);
-            var endpoint = _endpointManager.GetEndpoint(rt.Watchee.Address);
+            var endpoint = _endpointManager.GetEndpoint(rt.Watchee);
             if (endpoint is null) return;
             _system.Root.Send(endpoint, rt);
         }

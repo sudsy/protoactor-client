@@ -17,7 +17,7 @@ namespace Proto.Client
         private ClientReceiveEndpointReader? _clientReceiveEndpointReader;
         private IEndpointManager? _clientSendEndpointManager;
         private int _clientHostPort;
-        private Guid _clientGUID;
+        private string _clientActorRoot;
         private ClientRootContext _clientRootContext;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
 
@@ -32,8 +32,9 @@ namespace Proto.Client
             _config = config;
             _clientHost = clientHost;
             _clientHostPort = clientHostPort;
-            _clientGUID = Guid.NewGuid();
-            _clientRootContext = new ClientRootContext(system.Root, _clientGUID);
+            var clientGUID = Guid.NewGuid();
+            _clientActorRoot = $"$clients/{clientGUID}";
+            _clientRootContext = new ClientRootContext(system.Root, _clientActorRoot);
             System.Extensions.Register(config.Serialization);
         }
 
@@ -51,7 +52,7 @@ namespace Proto.Client
                 _clientSendEndpointManager = new ClientSendEndpointManager(System, Config, channelProvider, $"{_clientHost}:{_clientHostPort}");
                 
                 //Set up the receiving connection
-                _clientReceiveEndpointReader = new ClientReceiveEndpointReader(System, Config, channelProvider, _clientSendEndpointManager, $"{_clientHost}:{_clientHostPort}", _clientGUID);
+                _clientReceiveEndpointReader = new ClientReceiveEndpointReader(System, Config, channelProvider, _clientSendEndpointManager, $"{_clientHost}:{_clientHostPort}", _clientActorRoot);
               
                 
               
