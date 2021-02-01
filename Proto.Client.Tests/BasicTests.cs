@@ -94,6 +94,7 @@ namespace Proto.Client.Tests
             
             // Console.WriteLine(result);
             await tcs.Task;
+            await client.StopAsync();
             
         }
 
@@ -124,7 +125,7 @@ namespace Proto.Client.Tests
             clientContext.Stop(stopperPID);
             await tcs.Task;
             // throw new ApplicationException();
-
+            await client.StopAsync();
         }
 
         [Fact(Timeout= 10000)]
@@ -159,6 +160,7 @@ namespace Proto.Client.Tests
             }));
             
             await tcs.Task;
+            await client.StopAsync();
         }
 
 
@@ -189,13 +191,13 @@ namespace Proto.Client.Tests
             
             await tcs.Task;
 
-
+            await client.StopAsync();
         }
 
         [Fact(Timeout= 10000)]
         public async Task CanWatchActorOnClient()
         {
-              var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>();
 
             await _remoteClientHost.hostStartTask;
             
@@ -224,7 +226,12 @@ namespace Proto.Client.Tests
             }));
             
             await tcs.Task;
+            await client.StopAsync();
         }
+
+        //Need to terminate the client and make sure that everything is closed down both server and client side
+
+        //Also need to deal with unexpected termination
 
         
     }

@@ -9,6 +9,7 @@ namespace Proto.Client
         private readonly ActorSystem _system;
         private Client_RemoteProcess _remoteClientHostProcessSingleton;
         private PID _endpointActorPid;
+        private readonly object _synLock = new();
 
         public ClientSendEndpointManager(ActorSystem system, RemoteConfigBase remoteConfig, IChannelProvider channelProvider, string clientHostAddress){
             _system = system;
@@ -43,6 +44,13 @@ namespace Proto.Client
 
         public void Start(){
             //This does nothing at the moment
+        }
+
+        public void Stop(){
+            lock (_synLock)
+            {
+                _system.Root.StopAsync(_endpointActorPid).GetAwaiter().GetResult();
+            }
         }
     }
 }

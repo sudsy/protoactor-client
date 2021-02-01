@@ -15,9 +15,11 @@ namespace Proto.Client
         private GrpcNetRemoteConfig _config;
         private string _clientHost;
         private ClientReceiveEndpointReader? _clientReceiveEndpointReader;
-        private IEndpointManager? _clientSendEndpointManager;
+        private ClientChannelProvider _channelProvider;
+        private ClientSendEndpointManager? _clientSendEndpointManager;
         private int _clientHostPort;
         private string _clientActorRoot;
+        private string _clientHostAddress;
         private ClientRootContext _clientRootContext;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
 
@@ -34,6 +36,7 @@ namespace Proto.Client
             _clientHostPort = clientHostPort;
             var clientGUID = Guid.NewGuid();
             _clientActorRoot = $"$clients/{clientGUID}";
+            _clientHostAddress = $"{_clientHost}:{_clientHostPort}";
             _clientRootContext = new ClientRootContext(system.Root, _clientActorRoot);
             System.Extensions.Register(config.Serialization);
            
@@ -47,13 +50,13 @@ namespace Proto.Client
             {
                 if (Started)
                     return _clientRootContext;
-                var channelProvider = new GrpcNetChannelProvider(_config);
+                _channelProvider = new ClientChannelProvider(_config);
                 
                 //Set up the sending connection using the existing Proto.Remote system
-                _clientSendEndpointManager = new ClientSendEndpointManager(System, Config, channelProvider, $"{_clientHost}:{_clientHostPort}");
+                _clientSendEndpointManager = new ClientSendEndpointManager(System, Config, _channelProvider, _clientHostAddress);
                 
                 //Set up the receiving connection
-                _clientReceiveEndpointReader = new ClientReceiveEndpointReader(System, Config, channelProvider, _clientSendEndpointManager, $"{_clientHost}:{_clientHostPort}", _clientActorRoot);
+                _clientReceiveEndpointReader = new ClientReceiveEndpointReader(System, Config, _channelProvider, _clientSendEndpointManager, _clientHostAddress, _clientActorRoot);
               
                 
               
@@ -84,7 +87,9 @@ namespace Proto.Client
         public Task StopAsync()
         {
             //Shut down the connections here
-            return Task.CompletedTask;
+            _clientSendEndpointManager?.Stop();
+            _clientReceiveEndpointReader?.Stop();
+            return _channelProvider.ShutdownChannelAsync();
         }
     }
 

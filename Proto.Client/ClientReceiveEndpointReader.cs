@@ -15,7 +15,7 @@ namespace Proto.Client
         private readonly ILogger Logger = Log.CreateLogger<ClientReceiveEndpointReader>();
         private ActorSystem _system;
         private RemoteConfigBase _remoteConfig;
-        private GrpcNetChannelProvider _channelProvider;
+        private IChannelProvider _channelProvider;
         private string _address;
         private IEndpointManager _endpointManager;
         private String _clientActorRoot;
@@ -26,7 +26,7 @@ namespace Proto.Client
         private AsyncServerStreamingCall<MessageBatch>? _receiveMessagesStreamingCall;
         
 
-        public ClientReceiveEndpointReader(ActorSystem system, RemoteConfigBase config, GrpcNetChannelProvider channelProvider, IEndpointManager endpointManager, string address, string clientActorRoot)
+        public ClientReceiveEndpointReader(ActorSystem system, RemoteConfigBase config, IChannelProvider channelProvider, IEndpointManager endpointManager, string address, string clientActorRoot)
         {
             this._system = system;
             this._remoteConfig = config;
@@ -51,14 +51,19 @@ namespace Proto.Client
 
             _protoRemoteClient = new Remoting.RemotingClient(_channel);
 
+            
+
             Logger.LogDebug("[ClientReceiveEndpointReader] Created channel and client for address {Address}", _address);
 
             var res = await _protoRemoteClient.ConnectAsync(new ConnectRequest());
             _serializerId = res.DefaultSerializerId;
             
             _clientRemotingClient = new ClientRemoting.ClientRemotingClient(_channel);
+           
 
             _receiveMessagesStreamingCall = _clientRemotingClient.ClientMessageSender(new ClientDetails{ClientActorRoot = _clientActorRoot});
+
+            
 
             Logger.LogDebug("[ClientReceiveEndpointReader] Connected client for address {Address}", _address);
 
@@ -144,7 +149,9 @@ namespace Proto.Client
             
         }
 
-         private void ReceiveMessages(Proto.Remote.MessageEnvelope envelope, object message, PID target)
+      
+
+        private void ReceiveMessages(Proto.Remote.MessageEnvelope envelope, object message, PID target)
         {
             Proto.MessageHeader? header = null;
 
@@ -175,6 +182,12 @@ namespace Proto.Client
             var endpoint = _endpointManager.GetEndpoint(rt.Watchee);
             if (endpoint is null) return;
             _system.Root.Send(endpoint, rt);
+        }
+
+
+        internal void Stop()
+        {
+            _receiveMessagesStreamingCall?.Dispose();
         }
     }
 
