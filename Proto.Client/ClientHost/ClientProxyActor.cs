@@ -43,7 +43,7 @@ namespace Proto.Client.ClientHost
 
         private Task EndpointTerminated(IContext context)
         {
-            Logger.LogDebug("[EndpointActor] Handle terminated address {Address}", _address);
+            Logger.LogDebug("[ClientProxyActor] Handle terminated address {Address}", _address);
             foreach (var (id, pidSet) in _watchedActors)
             {
                 var watcherPid = PID.FromAddress(context.System.Address, id);
@@ -175,7 +175,7 @@ namespace Proto.Client.ClientHost
             batch.TypeNames.AddRange(typeNameList);
             batch.Envelopes.AddRange(envelopes);
 
-            // Logger.LogDebug("[EndpointActor] Sending {Count} envelopes for {Address}", envelopes.Count, _address);
+            // Logger.LogDebug("[ClientProxyActor] Sending {Count} envelopes for {Address}", envelopes.Count, _address);
 
             return SendEnvelopesAsync(batch, context);
         }
@@ -185,7 +185,7 @@ namespace Proto.Client.ClientHost
             if (_responseStream == null)
             {
                 Logger.LogError(
-                    "[EndpointActor] gRPC Failed to send to address {Address}, reason No Connection available"
+                    "[ClientProxyActor] gRPC Failed to send to address {Address}, reason No Connection available"
                     , _address
                 );
                 return;
@@ -193,13 +193,13 @@ namespace Proto.Client.ClientHost
 
             try
             {
-                // Logger.LogDebug("[EndpointActor] Writing batch to {Address}", _address);
-
+                Logger.LogDebug("[ClientProxyActor] Writing batch to {Address}", _address);
+                
                 await _responseStream.WriteAsync(batch).ConfigureAwait(false);
             }
             catch (Exception x)
             {
-                Logger.LogError(x, "[EndpointActor] gRPC Failed to send to address {Address}, reason {Message}",
+                Logger.LogError(x, "[ClientProxyActor] gRPC Failed to send to address {Address}, reason {Message}",
                     _address,
                     x.Message
                 );

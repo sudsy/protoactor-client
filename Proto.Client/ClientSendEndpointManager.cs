@@ -24,7 +24,14 @@ namespace Proto.Client
                 )
                 .WithGuardianSupervisorStrategy(new EndpointSupervisorStrategy(clientHostAddress, remoteConfig, _system));
             _endpointActorPid = _system.Root.SpawnNamed(props, $"endpoint-{clientHostAddress}");
-            _system.ProcessRegistry.RegisterHostResolver(pid => _remoteClientHostProcessSingleton);
+            _system.ProcessRegistry.RegisterHostResolver(pid => {
+                Logger.LogDebug("Host Resolver looking up {pid}", pid);
+                return new Client_RemoteProcess(_system, this, pid);
+            }); //This triggers for anything with a different address than us
+            _system.ProcessRegistry.RegisterClientResolver(pid => {
+                Logger.LogDebug("Client Resolver looking up {pid}", pid);
+                return new Client_RemoteProcess(_system, this, pid);
+            }); //This is for anything that is not registered locally - there shouldn't be any duplication between local and remot pid names 
         }
 
         public PID? GetEndpoint(PID destination)

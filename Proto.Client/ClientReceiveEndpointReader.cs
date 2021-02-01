@@ -64,6 +64,12 @@ namespace Proto.Client
 
             this.ReceiveMessages();
 
+            // var responseHeaders = await _receiveMessagesStreamingCall.ResponseHeadersAsync;
+
+            // Logger.LogDebug("")
+
+            //Wait for the reqponse headers to make sure everything is set up porperly on the server before returning
+
         }
 
         private void ReceiveMessages()
@@ -85,9 +91,9 @@ namespace Proto.Client
 
                             var batch = responseStream.Current;
 
-                            // Logger.LogDebug("[EndpointReader] Received a batch of {Count} messages from {Remote}",
-                            //     batch.TargetNames.Count, context.Peer
-                            // );
+                            Logger.LogDebug("[ClientReceiveEndpointReader] Received a batch of {Count} messages",
+                                batch.TargetNames.Count
+                            );
 
                             //only grow pid lookup if needed
                             if (batch.TargetNames.Count > targets.Length) targets = new PID[batch.TargetNames.Count];

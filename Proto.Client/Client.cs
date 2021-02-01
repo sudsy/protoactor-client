@@ -36,6 +36,7 @@ namespace Proto.Client
             _clientActorRoot = $"$clients/{clientGUID}";
             _clientRootContext = new ClientRootContext(system.Root, _clientActorRoot);
             System.Extensions.Register(config.Serialization);
+           
         }
 
 

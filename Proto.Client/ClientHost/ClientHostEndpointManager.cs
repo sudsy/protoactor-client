@@ -23,6 +23,10 @@ namespace Proto.Client.ClientHost
 
         public PID? GetEndpoint(PID destination)
         {
+            Logger.LogDebug("[ClientHostEndpointManager] Getting endpoint for {PID}", destination);
+            if(_clientActorRootLength == 0 || _clientActorRootLength > destination.Id.Length){
+                return null;
+            }
             var destinationPrefix = destination.Id.Substring(0, _clientActorRootLength);
             PID? clientProxy;
             if(_connections.TryGetValue(destinationPrefix, out clientProxy)){
@@ -37,7 +41,7 @@ namespace Proto.Client.ClientHost
             throw new System.NotImplementedException();
         }
 
-        public Task RegisterClient(ClientDetails request, IServerStreamWriter<MessageBatch> responseStream, ServerCallContext context)
+        public async Task RegisterClient(ClientDetails request, IServerStreamWriter<MessageBatch> responseStream, ServerCallContext context)
         {
             var clientActorRoot = request.ClientActorRoot;
             _clientActorRootLength = clientActorRoot.Length;
@@ -51,7 +55,7 @@ namespace Proto.Client.ClientHost
             var endpointActorPid = _system.Root.SpawnNamed(props, $"clientproxy-{clientActorRoot}");
             Logger.LogDebug("[ClientHostEndpointManager] Created new endpoint for {Address}", clientActorRoot);
             _connections.TryAdd(clientActorRoot, endpointActorPid);
-            return Task.CompletedTask;
+            await Task.Delay(-1); //Wait indefinitely for now. // Should be linked to remote temrninate message inside ClientPRoxyActor
         }
     }
 }
