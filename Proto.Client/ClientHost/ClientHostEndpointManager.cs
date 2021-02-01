@@ -10,7 +10,7 @@ namespace Proto.Client.ClientHost
     internal class ClientHostEndpointManager : IEndpointManager
     {
         private readonly ILogger Logger = Log.CreateLogger<ClientHostEndpointManager>();
-        private readonly ConcurrentDictionary<string, PID> _connections = new();
+        private static readonly ConcurrentDictionary<string, PID> _connections = new();
         private ActorSystem _system;
         private RemoteConfigBase _remoteConfig;
         private int _clientActorRootLength;
@@ -23,12 +23,14 @@ namespace Proto.Client.ClientHost
 
         public PID? GetEndpoint(PID destination)
         {
-            Logger.LogDebug("[ClientHostEndpointManager] Getting endpoint for {PID}", destination);
+            
             if(_clientActorRootLength == 0 || _clientActorRootLength > destination.Id.Length){
                 return null;
             }
             var destinationPrefix = destination.Id.Substring(0, _clientActorRootLength);
             PID? clientProxy;
+            Logger.LogDebug("[ClientHostEndpointManager] Getting endpoint for {PID}, prefix {prefix}", destination, destinationPrefix);
+            Logger.LogDebug("[ClientHostEndpointManager] connection count {count}", _connections.Count);
             if(_connections.TryGetValue(destinationPrefix, out clientProxy)){
                 return clientProxy;
             }
@@ -54,7 +56,11 @@ namespace Proto.Client.ClientHost
                 .WithGuardianSupervisorStrategy(new EndpointSupervisorStrategy(clientActorRoot, _remoteConfig, _system));
             var endpointActorPid = _system.Root.SpawnNamed(props, $"clientproxy-{clientActorRoot}");
             Logger.LogDebug("[ClientHostEndpointManager] Created new endpoint for {Address}", clientActorRoot);
-            _connections.TryAdd(clientActorRoot, endpointActorPid);
+            if(!_connections.TryAdd(clientActorRoot, endpointActorPid)){
+                //Failed to add so immediately shutdown // probably need to clean up the actor
+                return;
+            };
+            Logger.LogDebug("[ClientHostEndpointManager] Added Connection - total count is now {count}", _connections.Count);
             await Task.Delay(-1); //Wait indefinitely for now. // Should be linked to remote temrninate message inside ClientPRoxyActor
         }
     }
