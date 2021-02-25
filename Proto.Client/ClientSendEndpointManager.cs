@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Proto.Remote;
 
@@ -46,11 +47,10 @@ namespace Proto.Client
             //This does nothing at the moment
         }
 
-        public void Stop(){
-            lock (_synLock)
-            {
-                _system.Root.StopAsync(_endpointActorPid).GetAwaiter().GetResult();
-            }
+        public Task StopAsync(){
+            
+            return _system.Root.StopAsync(_endpointActorPid);
+            
         }
     }
 }

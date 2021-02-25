@@ -134,6 +134,7 @@ namespace Proto.Client
                     }
                     catch (Exception x)
                     {
+                        
                         Logger.LogError(x, "[ClientReceiveEndpointReader] Lost connection to address {Address}", _address);
                         var endpointError = new EndpointErrorEvent
                         {
@@ -164,19 +165,19 @@ namespace Proto.Client
 
         private void SystemMessage(SystemMessage sys, PID target)
         {
-            // Logger.LogDebug(
-            //     "[EndpointReader] Forwarding remote system message {@MessageType}:{@Message}",
-            //     sys.GetType().Name, sys
-            // );
+            Logger.LogDebug(
+                "[ClientReceiveEndpointReader] Forwarding remote system message {@MessageType}:{@Message}",
+                sys.GetType().Name, sys
+            );
 
             target.SendSystemMessage(_system, sys);
         }
 
         private void Terminated(Terminated msg, PID target)
         {
-            // Logger.LogDebug(
-            //     "[EndpointReader] Forwarding remote endpoint termination request for {Who}", msg.Who
-            // );
+            Logger.LogDebug(
+                "[ClientReceiveEndpointReader] Forwarding remote endpoint termination request for {Who}", msg.Who
+            );
 
             var rt = new RemoteTerminate(target, msg.Who);
             var endpoint = _endpointManager.GetEndpoint(rt.Watchee);
@@ -187,6 +188,7 @@ namespace Proto.Client
 
         internal void Stop()
         {
+            //Maybe there's a more graceful way to handle this
             _receiveMessagesStreamingCall?.Dispose();
         }
     }

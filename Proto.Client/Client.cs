@@ -84,12 +84,16 @@ namespace Proto.Client
                 
         }
 
-        public Task StopAsync()
+        public async Task StopAsync()
         {
+           if(_clientSendEndpointManager is null){
+               return;
+           }
             //Shut down the connections here
-            _clientSendEndpointManager?.Stop();
             _clientReceiveEndpointReader?.Stop();
-            return _channelProvider.ShutdownChannelAsync();
+            await _clientSendEndpointManager?.StopAsync(); //This will also shutdown the channel
+            
+            
         }
     }
 

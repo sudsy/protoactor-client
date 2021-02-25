@@ -141,26 +141,30 @@ namespace Proto.Client.Tests
             var client = new Client(new ActorSystem(), clientConfig, "127.0.0.1", 5000);
             var clientContext = await client.StartAsync();
 
-            var watchedPIDServer = _remoteClientHost.remoteSystem.Root.SpawnNamed(Props.FromFunc(ctx => {
+            var watchedPIDServer = _remoteClientHost.remoteSystem.Root.SpawnPrefix(Props.FromFunc(ctx => {
          
                 return Task.CompletedTask;
             }), "watched");
             var watchedPID = new PID(watchedPIDServer);
 
-            var watcherPID = clientContext.Spawn(Props.FromFunc(ctx => {
+            var watcherPID = clientContext.SpawnPrefix(Props.FromFunc(ctx => {
                 if(ctx.Message is Started){
                     ctx.Watch(watchedPID);
                     ctx.Stop(watchedPID);
                 }
-                if(ctx.Message is Terminated){
-                    tcs.TrySetResult(true);
+                if(ctx.Message is Terminated term){
+                    if(term.Who.Address == watchedPID.Address && term.Who.Id == watchedPID.Id){
+                        tcs.TrySetResult(true);
+                    }
+                    
                 }
 
                 return Task.CompletedTask;
-            }));
+            }), "watcher");
             
             await tcs.Task;
             await client.StopAsync();
+            
         }
 
 
@@ -206,30 +210,72 @@ namespace Proto.Client.Tests
             var client = new Client(new ActorSystem(), clientConfig, "127.0.0.1", 5000);
             var clientContext = await client.StartAsync();
 
-            var watchedClient = clientContext.SpawnNamed(Props.FromFunc(ctx => {
+            var watchedClient = clientContext.SpawnPrefix(Props.FromFunc(ctx => {
          
                 return Task.CompletedTask;
             }), "watched");
             
             var watchedClientPID = new PID(watchedClient);
 
-            var watcherPID = _remoteClientHost.remoteSystem.Root.Spawn(Props.FromFunc(ctx => {
+            var watcherPID = _remoteClientHost.remoteSystem.Root.SpawnPrefix(Props.FromFunc(ctx => {
                 if(ctx.Message is Started){
                     ctx.Watch(watchedClientPID);
                     ctx.Stop(watchedClientPID);
+                }
+                if(ctx.Message is Terminated term){
+                    if(term.Who.Address == watchedClientPID.Address && term.Who.Id == watchedClientPID.Id){
+                        tcs.TrySetResult(true);
+                    }
+                    
+                }
+
+                return Task.CompletedTask;
+            }), "watcher");
+            
+            await tcs.Task;
+            await client.StopAsync();
+            throw new ApplicationException();
+        }
+
+        //Need to terminate the client and make sure that server actor receives terminated message
+         [Fact(Timeout= 10000)]
+        public async Task CanTerminateClient()
+        {
+            
+            var tcs = new TaskCompletionSource<bool>();
+
+            await _remoteClientHost.hostStartTask;
+            
+            var clientConfig = GrpcNetRemoteConfig.BindToLocalhost(5001)
+                .WithProtoMessages(Proto.Client.TestMessages.ProtosReflection.Descriptor);
+            var client = new Client(new ActorSystem(), clientConfig, "127.0.0.1", 5000);
+            var clientContext = await client.StartAsync();
+
+            var watchedClient = clientContext.SpawnPrefix(Props.FromFunc(ctx => {
+         
+                return Task.CompletedTask;
+            }), "watched");
+            
+            var watchedClientPID = new PID(watchedClient);
+
+            var watcherPID = _remoteClientHost.remoteSystem.Root.SpawnPrefix(Props.FromFunc(ctx => {
+                if(ctx.Message is Started){
+                    ctx.Watch(watchedClientPID);
                 }
                 if(ctx.Message is Terminated){
                     tcs.TrySetResult(true);
                 }
 
                 return Task.CompletedTask;
-            }));
-            
-            await tcs.Task;
+            }), "watcher");
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
             await client.StopAsync();
+            await tcs.Task;
+            
         }
 
-        //Need to terminate the client and make sure that everything is closed down both server and client side
+        //Need to be able to spawn actors on remote and client
 
         //Also need to deal with unexpected termination
 

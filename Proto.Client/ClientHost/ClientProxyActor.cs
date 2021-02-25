@@ -103,6 +103,7 @@ namespace Proto.Client.ClientHost
 
         private Task RemoteWatch(IContext context, RemoteWatch msg)
         {
+            Logger.LogDebug("[ClientProxyActor] Setting up watch of client actor {msg}", msg);
             if (_watchedActors.TryGetValue(msg.Watcher.Id, out var pidSet))
                 pidSet.Add(msg.Watchee);
             else

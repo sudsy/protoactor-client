@@ -45,6 +45,7 @@ namespace Proto.Client.ClientHost
 
         public async Task RegisterClient(ClientDetails request, IServerStreamWriter<MessageBatch> responseStream, ServerCallContext context)
         {
+            var tcs = new TaskCompletionSource<bool>();
             var clientActorRoot = request.ClientActorRoot;
             _clientActorRootLength = clientActorRoot.Length;
             var props = Props
@@ -60,8 +61,17 @@ namespace Proto.Client.ClientHost
                 //Failed to add so immediately shutdown // probably need to clean up the actor
                 return;
             };
+
+            context.CancellationToken.Register(() => {
+                Logger.LogDebug("[ClientHostEndpointManager] Handling Stream Cancellation");
+                _system.Root.Stop(endpointActorPid);
+                PID? removedActor;
+                _connections.TryRemove(clientActorRoot, out removedActor);
+                tcs.SetResult(true);
+            });
+            
             Logger.LogDebug("[ClientHostEndpointManager] Added Connection - total count is now {count}", _connections.Count);
-            await Task.Delay(-1); //Wait indefinitely for now. // Should be linked to remote temrninate message inside ClientPRoxyActor
+            await tcs.Task; 
         }
     }
 }
